@@ -6,7 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/python-hyper/hpack/archive/refs/tags/v4.1.0.tar.gz
+  url: https://github.com/python-hyper/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: d8e08ec703362fab42224f31e3eee0a73b8c6a28e1f05c1318feb2c54453abcf
 
 build:

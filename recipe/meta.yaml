@@ -1,41 +1,57 @@
 {% set name = "hpack" %}
-{% set version = "4.0.0" %}
-{% set sha256 = "fc41de0c63e687ebffde81187a948221294896f6bdc0ae2312708df339430095" %}
+{% set version = "4.1.0" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  fn: {{ name }}-{{ version }}.tar.gz
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: {{ sha256 }}
+  url: https://github.com/python-hyper/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: d8e08ec703362fab42224f31e3eee0a73b8c6a28e1f05c1318feb2c54453abcf
 
 build:
+  skip: true  # [py<39]
   number: 0
-  noarch: python
-  script: python setup.py install --single-version-externally-managed --record=record.txt
+  script: {{ PYTHON }} -m pip install . --no-deps --no-build-isolation -vvv
 
 requirements:
   host:
     - python
-    - setuptools
     - pip
-    - wheel
+    - setuptools
+    - wheel >=0.45.0,<1
   run:
     - python
 
 test:
   imports:
     - hpack
+  source_files:
+    - tests
+  requires:
+    - python
+    - pip
+    - pytest >=8.3.3,<9
+    - hypothesis >=6.119.4,<7
+  commands:
+    - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -vv tests
 
 about:
-  home: http://python-hyper.org/hpack/
+  home: https://python-hyper.org/projects/hpack
   license: MIT
   license_family: MIT
   license_file: LICENSE
   summary: HTTP/2 Header Encoding for Python
+  description: |
+    hpack provides a simple Python interface to the HPACK compression algorithm, 
+    used to compress HTTP headers in HTTP/2. Used by some of the most popular
+    HTTP/2 implementations in Python, HPACK offers a great Python interface as
+    well as optional upgrade to optimised C-based compression routines from
+    nghttp2.
   dev_url: https://github.com/python-hyper/hpack
+  doc_url: https://python-hyper.org/projects/hpack
 
 extra:
   recipe-maintainers:
